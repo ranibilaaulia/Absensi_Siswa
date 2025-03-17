@@ -16,4 +16,10 @@ Route::get('/login', function () {
     return view('login_admin');
 });
 
+Route::get('/siswa', function () {
+    return view('index',[
+        "menu"=>"siswa"
+    ]);
+});
+
 
