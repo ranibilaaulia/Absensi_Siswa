@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SeoDash Free Bootstrap Admin Template by Adminmart</title>
+  <title>smkn 1 karang baru</title>
   <link rel="shortcut icon" type="image/png" href="../assets/images/logos/seodashlogo.png" />
   <link rel="stylesheet" href="{{asset('assets/css/styles.min.css')}}" />
 </head>
@@ -37,7 +37,7 @@
                 <span>
                   <iconify-icon icon="solar:home-smile-bold-duotone" class="fs-6"></iconify-icon>
                 </span>
-                <span class="hide-menu">Dashboard</span>
+                <span class="hide-menu">Dashb</span>
               </a>
             
             <li class="sidebar-item">
@@ -83,10 +83,7 @@
             
             <li class="sidebar-item">
               <a class="sidebar-link" href="{{url('/login')}}" aria-expanded="false">
-                <span>
-                  <iconify-icon icon="solar:login-3-bold-duotone" class="fs-6"></iconify-icon>
-                </span>
-                <span class="hide-menu">Login</span>
+                
               </a>
           </ul>
           <div class="unlimited-access hide-menu bg-primary-subtle position-relative mb-7 mt-7 rounded-3"> 
@@ -128,7 +125,11 @@
           
 
                     </a>
-                    <a href="./authentication-login.html" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
+                    <form action="{{route('logout')}}" method="POST">
+                      @csrf
+                      <button type="submit" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</button>
+                    </form>
+
                   </div>
                 </div>
               </li>

@@ -19,7 +19,9 @@ return new class extends Migration
             $table->string('alamat');
             $table->string('status');
             $table->string('mata_pelajaran');
+            $table->string('username');
             $table->string('password');
+            $table->string('jk',1)->comment('Jenis Kelamin: L = Laki-laki, P = Perempuan');
             $table->date('tanggal_bergabung');
             $table->bigInteger('user_id')->unsigned();
             $table->timestamps();

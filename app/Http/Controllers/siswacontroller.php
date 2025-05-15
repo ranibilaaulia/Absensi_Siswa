@@ -4,130 +4,157 @@ namespace App\Http\Controllers;
 
 use App\Models\lokal;
 use App\Models\siswa;
-use Illuminate\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
 
-class SiswaController extends Controller
+class siswacontroller extends Controller
 {
-    //
-    public function index(): View
-    {
-        $data_siswa = siswa::all();
-        return view('siswa.index', [
-            "menu" => "siswa",
-            "title" => "Data Siswa",
-            "data_siswa" => $data_siswa
-        ]);
-    }
+    /**
+     * Display a listing of the resource.
+     */
+  public function index()
+{
+    $datasiswa = Siswa::with('lokal')->get(); // Ambil data siswa beserta relasi lokal
+    return view('admin.siswa.index', [
+        'menu' => 'siswa',
+        'title' => 'Data Siswa',
+        'datasiswa' => $datasiswa, // Pastikan variabel ini dikirim ke view
+    ]);
+}
+    /**
+     * Show the form for creating a new resource.
+     */
+   
+public function create()
+{
+    $kelas = Lokal::all(); // Ambil semua data kelas
+    return view('admin.siswa.create', [
+        'menu' => 'siswa',
+        'title' => 'Tambah Data Siswa',
+        'kelas' => $kelas, // Pastikan variabel ini dikirim ke view
+    ]);
+}
 
-    public function create(): View
-    {
-        $kelas = lokal::all();
-        return view('siswa.create', [
-            "menu" => "siswa",
-            "title" => "Tambah Data Siswa",
-            "kelas" => $kelas
-        ]);
-    }
-
-    public function store(Request $request): RedirectResponse
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
     {
         $validasi = $request->validate([
-            "nama" => "required",
-            "nisn" => "required",
-            "jk" => "required",
-            "alamat" => "required",
-            "no_telp" => "required",
-            "nama_ortgtua" => "required",
-            "lokal_id" => "required",
-            "user_id" => "required"
-            
-            
-        ],
-        [
-            "nama.required" => "Nama Harus Diisi",
-            "nisn.required" => "NISN Harus Diisi",
-            "jk.required" => "Jenis Kelamin Harus Diisi",
-            "alamat.required" => "Alamat Harus Diisi",
-            "no_telp.required" => "no telepon Harus Diisi",
-            "nama_ortgtua.required" => "Nama Orang Tua Harus Diisi",
-            "lokal_id.required" => "Kelas Harus Diisi",
-            "user_id.required" => "User Id Harus Diisi"
-            
+            'nama' => 'required',
+            'nisn' => 'required',
+            'alamat' => 'required',
+            'jk' => 'required',
+            'no_telp' => 'required',
+            'username' => 'required',
+            'password' => 'required',
+            'no_telp_wm' => 'required',
+            'nama_wm' => 'required',
+            'alamat_wm' => 'required',
+            'lokal_id' => 'required',
+            'user_id' => 'nullable',
+            'kelas' => $request->kelas, // ← TAMBAHKAN INI
+        ], [
+            'nama.required' => 'Nama Harus Diisi',
+            'nisn.required' => 'NISN Harus Diisi',
+            'alamat.required' => 'Alamat Harus Diisi',
+            'jk.required' => 'Jenis Kelamin Harus Diisi',
+            'no_telp.required' => 'No _telp murid Harus Diisi',
+            'username.required' => 'Username Harus Diisi',
+            'password.required' => 'Password Harus Diisi',
+            'no_telp_wm.required' => 'No _telp WaliMurid Harus Diisi',
+            'nama_wm.required' => 'Nama WaliMurid Harus Diisi',
+            'alamat_wm.required' => 'Alamat WaliMurid Harus Diisi',
+            'lokal_id.required' => 'Kelas Harus Diisi',
         ]);
 
+        // Debugging: Periksa data yang diterima
+        //
+         
 
-        $siswa = new siswa;
+        $siswa  = new siswa;
         $siswa->nama = $validasi['nama'];
         $siswa->nisn = $validasi['nisn'];
-        $siswa->jk = $validasi['jk'];
         $siswa->alamat = $validasi['alamat'];
-        $siswa->no_telp = $request->no_telp;
-        $siswa->nama_ortgtua = $validasi['nama_ortgtua'];
+        $siswa->jk = $validasi['jk'];
+        $siswa->no_telp = $validasi['no_telp'];
+        $siswa->username = $validasi['username'];
+        $siswa->password = bcrypt($validasi['password']);
+        $siswa->no_telp_wm = $validasi['no_telp_wm'];
+        $siswa->nama_wm = $validasi['nama_wm'];
+        $siswa->alamat_wm = $validasi['alamat_wm'];
         $siswa->lokal_id = $validasi['lokal_id'];
         $siswa->user_id = $validasi['user_id'];
-        
         $siswa->save();
-
-        return redirect()->route('siswa.index');
+        return redirect(route('siswa.index'))->with('success', 'Data siswa berhasil disimpan.');
     }
-    public function show($id): view
+
+        public function show($id)
     {
-        $siswa = Siswa::find($id);
-        return view('siswa.show', [
+        $siswa = siswa::find($id);
+        return view('admin.siswa.view', [
             'menu' => 'siswa',
             'title' => 'Detail Data Siswa',
             'siswa' => $siswa
         ]);
     }
-
-    public function edit($id): view
+    /**
+     * Display the specified resource.
+     */
+    public function edit($id)
     {
-        $siswa = Siswa::with('lokal')->find($id);
-        $kelas = Lokal::all();
-        return view('siswa.edit', [
+        $siswa = siswa::with('lokal')->find($id);
+        $lokal = lokal::all();
+        return view('admin.siswa.edit', [
             'menu' => 'siswa',
             'title' => 'Edit Data Siswa',
             'siswa' => $siswa,
-            'dtkelas' => $kelas
+            'lokal' => $lokal
         ]);
     }
 
-    public function update(Request $request, $id): RedirectResponse
+    public function update(Request $request, $id)
     {
         $validasi = $request->validate([
             'nama' => 'nullable',
             'nisn' => 'nullable',
-            'jk' => 'nullable',
             'alamat' => 'nullable',
-            'nohp' => 'nullable',
-            'nama_ortu' => 'nullable',
-            'local_id' => 'nullable',
-            'user_id' => 'nullable'
+            'jk' => 'nullable',
+            'no_telp' => 'nullable',
+            'username' => 'nullable',
+            'password' => 'nullable',
+            'no_telp_wm' => 'nullable',
+            'nama_wm' => 'nullable',
+            'alamat_wm' => 'nullable',
+            'lokal_id' => 'nullable',
+            'user_id' => 'nullable',
         ]);
 
         $siswa = Siswa::find($id);
         $siswa->nama = $validasi['nama'] ?? $siswa->nama;
         $siswa->nisn = $validasi['nisn'] ?? $siswa->nisn;
-        $siswa->jk = $validasi['jk'] ?? $siswa->jk;
         $siswa->alamat = $validasi['alamat'] ?? $siswa->alamat;
-        $siswa->nohp = $validasi['nohp'] ?? $siswa->nohp;
-        $siswa->nama_ortu = $validasi['nama_ortu'] ?? $siswa->nama_ortu;
-        $siswa->local_id = $validasi['local_id'] ?? $siswa->local_id;
+        $siswa->jk = $validasi['jk'] ?? $siswa->jk;
+        $siswa->no_telp = $validasi['no_telp'] ?? $siswa->no_telp;
+        $siswa->username = $validasi['username'] ?? $siswa->username;
+        if ($request->filled('password')) {
+            $siswa->password = bcrypt($validasi['password']);
+        }
+        $siswa->no_telp_wm = $validasi['no_telp_wm'] ?? $siswa->no_telp_wm;
+        $siswa->nama_wm = $validasi['nama_wm'] ?? $siswa->nama_wm;
+        $siswa->alamat_wm = $validasi['alamat_wm'] ?? $siswa->alamat_wm;
+        $siswa->lokal_id = $validasi['lokal_id'] ?? $siswa->lokal_id;
         $siswa->user_id = $validasi['user_id'] ?? $siswa->user_id;
-
-
         $siswa->save();
         return redirect(route('siswa.index'));
     }
-    public function destroy($id): RedirectResponse
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
     {
-        $siswa = Siswa::find($id);
+        $siswa = siswa::find($id);
         $siswa->delete();
         return redirect(route('siswa.index'));
     }
-
-    
 }
-

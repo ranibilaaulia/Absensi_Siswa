@@ -1,10 +1,28 @@
 <?php
-
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class absensi extends Model
+class Absensi extends Model
 {
-    //
+    use HasFactory;
+
+    protected $fillable = [
+        'siswa_id',
+        'id_guru',
+        'tanggal',
+        'status',
+        'keterangan',
+    ];
+
+    public function siswa()
+    {
+        return $this->belongsTo(Siswa::class);
+    }
+
+    public function guru()
+    {
+        return $this->belongsTo(Guru::class);
+    }
 }

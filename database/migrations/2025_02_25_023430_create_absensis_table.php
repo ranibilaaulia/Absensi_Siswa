@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->biginteger('siswa_id')->unsigned();
             $table->biginteger('guru_id')->unsigned();
-            $table->date('tanggal');
+            $table->date('tanggal_absen');
+            $table->time('jam_absen')->nullable();
             $table->enum('status',['hadir','tidak hadir','izin']);
             $table->text('keterangan')->nullable();
             $table->timestamps();

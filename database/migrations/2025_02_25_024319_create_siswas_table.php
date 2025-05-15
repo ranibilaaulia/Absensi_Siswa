@@ -13,15 +13,19 @@ return new class extends Migration
     {
         Schema::create('siswas', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
-            $table->string('nisn')->unique();
-            $table->enum('jk',['L','P']);
-            $table->string('alamat');
-            $table->string('no_telp');  
-            $table->string('nama_orgtua');
-            $table->bigInteger('lokal_id')->unsigned(); 
-            $table->bigInteger('user_id')->unsigned();
-            $table->timestamps();
+            $table->string('nama'); 
+            $table->string('nisn')->unique(); 
+            $table->enum('jk', ['L', 'P']); 
+            $table->string('username', 30);
+            $table->string('password');
+            $table->string('alamat'); 
+            $table->string('no_telp'); // Kolom untuk nomor telepon siswa
+            $table->string('nama_wm'); // Kolom untuk nama orang tua
+            $table->string('alamat_wm'); // Kolom untuk nama orang tua
+            $table->string('no_telp_wm'); // Kolom untuk nama orang tua
+           $table->string('lokal_id')->nullable(); // Relasi ke tabel lokal
+            $table->bigInteger('user_id')->unsigned(); // Relasi ke tabel lokal
+            $table->timestamps(); // Kolom created_at dan updated_at
         });
     }
 
@@ -33,5 +37,3 @@ return new class extends Migration
         Schema::dropIfExists('siswas');
     }
 };
-
-
