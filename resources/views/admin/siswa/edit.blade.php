@@ -41,6 +41,8 @@
                     <label for="kelas" class="form-label">Kelas</label>
                     <select name="lokal_id" id="lokal_id" class="form-control">
                         <option disabled selected value="{{$siswa->lokal_id}}">{{ $siswa->lokal ? $siswa->lokal->nama : 'Pilih Kelas' }}</option>
+                        <option value=>XI RPL 1</option>
+                        <option value=>XI RPL 2</option>
                         
                         @foreach($kelas as $k)
                         <option value="{{$k['id']}}">{{$k['nama']}}</option>

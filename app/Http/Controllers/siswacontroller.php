@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\lokal;
 use App\Models\siswa;
 use Illuminate\Http\Request;
@@ -11,34 +12,36 @@ class siswacontroller extends Controller
     /**
      * Display a listing of the resource.
      */
-  public function index()
-{
-    $datasiswa = Siswa::with('lokal')->get(); // Ambil data siswa beserta relasi lokal
-    return view('admin.siswa.index', [
-        'menu' => 'siswa',
-        'title' => 'Data Siswa',
-        'datasiswa' => $datasiswa, // Pastikan variabel ini dikirim ke view
-    ]);
-}
+    public function index()
+    {
+        $datasiswa = Siswa::with('lokal')->get();
+        return view('admin.siswa.index', [
+            'menu' => 'siswa',
+            'title' => 'Data Siswa',
+            'datasiswa' => $datasiswa
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
-   
-public function create()
-{
-    $kelas = Lokal::all(); // Ambil semua data kelas
-    return view('admin.siswa.create', [
-        'menu' => 'siswa',
-        'title' => 'Tambah Data Siswa',
-        'kelas' => $kelas, // Pastikan variabel ini dikirim ke view
-    ]);
-}
+    public function create()
+    {
+        $kelas = lokal::all();
+        return view('admin.siswa.create', [
+            'menu' => 'siswa',
+            'title' => 'Tambah Data Siswa',
+            'kelas' => $kelas
+            
+        ]);
+    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
+
         $validasi = $request->validate([
             'nama' => 'required',
             'nisn' => 'required',
@@ -52,7 +55,6 @@ public function create()
             'alamat_wm' => 'required',
             'lokal_id' => 'required',
             'user_id' => 'nullable',
-            'kelas' => $request->kelas, // ← TAMBAHKAN INI
         ], [
             'nama.required' => 'Nama Harus Diisi',
             'nisn.required' => 'NISN Harus Diisi',
@@ -67,9 +69,16 @@ public function create()
             'lokal_id.required' => 'Kelas Harus Diisi',
         ]);
 
-        // Debugging: Periksa data yang diterima
-        //
-         
+        // Insert data ke tabel user
+
+        $user=new User;
+        $user->name = $validasi['nama'];
+        
+        $user->username = $validasi['username'];
+        $user->password = bcrypt($validasi['password']);
+        $user->role = 'siswa';
+        $user->save();
+        //pilih user_id yang baru baru diinputkan
 
         $siswa  = new siswa;
         $siswa->nama = $validasi['nama'];
@@ -83,9 +92,9 @@ public function create()
         $siswa->nama_wm = $validasi['nama_wm'];
         $siswa->alamat_wm = $validasi['alamat_wm'];
         $siswa->lokal_id = $validasi['lokal_id'];
-        $siswa->user_id = $validasi['user_id'];
+        $siswa->user_id = $user->id;
         $siswa->save();
-        return redirect(route('siswa.index'))->with('success', 'Data siswa berhasil disimpan.');
+        return redirect(route('siswa.index'));
     }
 
         public function show($id)
@@ -103,12 +112,12 @@ public function create()
     public function edit($id)
     {
         $siswa = siswa::with('lokal')->find($id);
-        $lokal = lokal::all();
+        $kelas = lokal::all();
         return view('admin.siswa.edit', [
             'menu' => 'siswa',
             'title' => 'Edit Data Siswa',
             'siswa' => $siswa,
-            'lokal' => $lokal
+            'kelas' => $kelas
         ]);
     }
 

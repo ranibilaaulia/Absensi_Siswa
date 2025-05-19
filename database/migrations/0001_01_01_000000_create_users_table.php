@@ -15,14 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('username')->unique();
-            $table->string('email')->unique();
             $table->string('password');
-            $table->enum('role', ['admin', 'guru', 'siswa']);
+            $table->enum('role', ['admin', 'guru', 'siswa','walikelas']);
             $table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });

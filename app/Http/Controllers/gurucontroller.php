@@ -43,7 +43,6 @@ class gurucontroller extends Controller
             'alamat' => 'required',
             'status' => 'required',
             'mata_pelajaran' => 'required',
-            'email' => 'required',
             'username' => 'required',
             'password' => 'required',
             'jk' => 'required', // Jenis Kelamin
@@ -56,7 +55,6 @@ class gurucontroller extends Controller
             'alamat.required' => 'Alamat Harus Diisi',
             'status.required' => 'Status Harus Diisi',
             'mata_pelajaran.required' => 'Mata Pelajaran Harus Diisi',
-            'email.required' => 'Email Harus Diisi',
             'username.required' => 'Username Harus Diisi',
             'password.required' => 'Password Harus Diisi',
             'jk.required' => 'Jenis Kelamin Harus Diisi',
@@ -68,7 +66,6 @@ class gurucontroller extends Controller
         $user = new User();
         $user->name = 'Guru';
         $user->username = $validasi['username'];
-        $user->email = $validasi['email'];
         $user->password = bcrypt($validasi['password']);
         $user->role = 'guru';
         $user->save();

@@ -21,4 +21,8 @@ class siswa extends Model
     {
         return $this->hasMany(siswa::class, 'user_id');
     }
+     public function absensis()
+    {
+        return $this->hasMany(Absen::class, 'siswa_id');
+    }
 }

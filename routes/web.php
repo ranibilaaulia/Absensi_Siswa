@@ -10,6 +10,9 @@ use App\Http\Controllers\LokalController;
 use App\Http\Controllers\walikelascontroller;
 use App\Http\Controllers\ortucontroller;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\admincontroller;
+use App\Http\Controllers\AbsenController;
+
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -68,6 +71,15 @@ Route::put('/user/{id}', [UserController::class, 'update'])->name('user.update')
 Route::delete('/user/{id}', [UserController::class, 'destroy'])->name('user.destroy');
 Route::get('/user/{id}', [UserController::class, 'show'])->name('user.show');
 Route::post('/user/store', [UserController::class, 'store'])->name('user.store');
+
+Route::get('/dashboardGuru', [dashboardcontroller::class, 'dashboardGuru'])->name('dashboard.guru');
+Route::get('/absen', [absencontroller::class, 'index'])->name('absen.index');
+Route::get('/absen/create', [absencontroller::class, 'create'])->name('absen.create');
+Route::post('/absen/store', [absencontroller::class, 'store'])->name('absen.store');
+Route::get('absen/{id}/edit', [AbsenController::class, 'edit'])->name('absen.edit');
+Route::put('absen/{id}', [AbsenController::class, 'update'])->name('absen.update');
+Route::get('/absen/riwayat', [AbsenController::class, 'riwayat'])->name('absen.riwayat');
+Route::post('/absen/update-status', [absencontroller::class, 'updateStatus'])->name('absen.updateStatus');
 
 
 

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Guru;
-use App\Models\Lokal;
-use App\Models\Jurusan;
+use App\Models\guru;
+use App\Models\User;
+use App\Models\lokal;
+use App\Models\jurusan;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
-class lokalcontroller extends Controller {
-
+class lokalcontroller extends Controller
+{
     public function index()
     {
         $lokal = Lokal::with('guru')->get(); // Mengambil data dengan relasi
@@ -47,49 +47,31 @@ class lokalcontroller extends Controller {
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $validasi = $request->validate([
-            'nama' => 'required', // Angkatan (X, XI, XII, XIII)
-            'id_jurusan' => 'required',
-            'id_guru' => 'required',
-            'tingkat_kelas' => 'required',
-            'kapasitas_siswa' => 'required|integer|min:1',
-            'tahun_ajaran' => 'required|date_format:Y'
-        ], [
-            'nama.required' => 'Angkatan harus dipilih',
-            'tingkat_kelas.required' => 'Tingkat kelas harus dipilih',
-            'kapasitas_siswa.required' => 'Kapasitas siswa harus diisi',
-            'kapasitas_siswa.integer' => 'Kapasitas siswa harus berupa angka',
-            'kapasitas_siswa.min' => 'Kapasitas siswa minimal 1',
-            'tahun_ajaran.required' => 'Tahun ajaran harus diisi',
-            'tahun_ajaran.date_format' => 'Tahun ajaran harus dalam format tahun (YYYY)',
-            'id_jurusan.required' => 'Jurusan harus dipilih',
-            'id_guru.required' => 'Wali kelas harus dipilih'
-        ]);
-        
-        // Ambil nama jurusan berdasarkan id_jurusan
-        $jurusan = Jurusan::find($validasi['id_jurusan']);
+   
+public function store(Request $request)
+{
+    $validasi = $request->validate([
+        'tingkat_kelas' => 'required',
+        'tahun_ajaran' => 'required',
+        'id_jurusan' => 'required',
+        'id_guru' => 'required',
+        // tambahkan validasi lain jika perlu
+    ]);
 
-        if (!$jurusan) {
-            return back()->withErrors(['id_jurusan' => 'Jurusan tidak ditemukan']);
-        }
+    // Gabungkan tingkat_kelas dan nama jurusan untuk field nama
+    $jurusan = \App\Models\Jurusan::find($validasi['id_jurusan']);
+    $nama_kelas = $validasi['tingkat_kelas'] . ' ' . ($jurusan ? $jurusan->nama : '');
 
-        // Gabungkan angkatan dengan nama jurusan (menggunakan huruf)
-        $nama_kelas = $validasi['nama'] . ' ' . $jurusan->nama;
+    $lokal = new \App\Models\Lokal();
+    $lokal->nama = $nama_kelas; // <-- WAJIB DIISI
+    $lokal->tingkat_kelas = $validasi['tingkat_kelas'];
+    $lokal->tahun_ajaran = $validasi['tahun_ajaran'];
+    $lokal->id_jurusan = $validasi['id_jurusan'];
+    $lokal->id_guru = $validasi['id_guru'];
+    $lokal->save();
 
-        // Simpan data ke database
-        $lokal = new Lokal();
-        $lokal->nama = $nama_kelas;
-        $lokal->tingkat_kelas = $validasi['nama'];
-        $lokal->kapasitas_siswa = $request->kapasitas_siswa;
-        $lokal->tahun_ajaran = $request->tahun_ajaran;
-        $lokal->id_jurusan = $validasi['id_jurusan'];
-        $lokal->id_guru = $validasi['id_guru'];
-        $lokal->save();
-
-        return redirect(route('admin.lokal.index'));
-    }
+    return redirect()->route('lokal.index')->with('success', 'Data kelas berhasil disimpan.');
+}
 
 
 
@@ -135,16 +117,10 @@ class lokalcontroller extends Controller {
     {
         $validasi = $request->validate([
             'nama' => 'required', // Angkatan (X, XI, XII, XIII)
-            'tingkat_kelas' => 'required',
-            'kapasitas_siswa' => 'required',
-            'tahun_ajaran' => 'required',
             'id_jurusan' => 'required',
             'id_guru' => 'required'
         ], [
             'nama.required' => 'Angkatan harus dipilih',
-            'tingkat_kelas.required' => 'Tingkat kelas harus dipilih',
-            'kapasitas_siswa.required' => 'Kapasitas siswa harus diisi',
-            'tahun_ajaran.required' => 'Tahun ajaran harus diisi',
             'id_jurusan.required' => 'Jurusan harus dipilih',
             'id_guru.required' => 'Wali kelas harus dipilih'
         ]);
@@ -166,9 +142,6 @@ class lokalcontroller extends Controller {
 
         // Update data di database
         $lokal->nama = $nama_kelas;
-        $lokal->tingkat_kelas = $validasi['nama'];
-        $lokal->kapasitas_siswa = $request->kapasitas_siswa;
-        $lokal->tahun_ajaran = $request->tahun_ajaran;
         $lokal->id_jurusan = $validasi['id_jurusan'];
         $lokal->id_guru = $validasi['id_guru'];
         $lokal->save();
@@ -183,7 +156,7 @@ class lokalcontroller extends Controller {
     public function destroy($id)
     {
         $lokal = lokal::find($id);
-        $lokal = Lokal::find($id);
+        $lokal->delete();
         return redirect(route('lokal.index'));
     }   
 }

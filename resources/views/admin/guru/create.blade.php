@@ -37,11 +37,7 @@
                 <div class="col-12">
                     <label for="mata_pelajaran" class="form-label">Mata Pelajaran</label>
                     <input type="text" class="form-control" id="mata_pelajaran" name="mata_pelajaran" placeholder="Masukkan mata pelajaran" required>
-                </div>
-                <div class="col-12">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Masukkan email" required>
-                </div>
+            
                 <div class="col-12">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" class="form-control" id="username" name="username" placeholder="Masukkan username" required>
